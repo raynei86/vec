@@ -6,7 +6,6 @@
 #include <stdexcept>
 
 // TODO: Const operators
-// TODO: Move constructor
 // TODO: Implement allocator
 // TODO: Incorporate Iterators
 // TODO: Implement all the other functions
@@ -32,6 +31,11 @@ class Vec {
 
     void push_back(const T data);
     void pop_back();
+    void swap(Vec& other);
+    void clear();
+    void erase(const std::size_t index);
+    void resize(const std::size_t newSize);
+    void insert(const std::size_t index, const T data);
 
     std::size_t size() const;
     std::size_t capacity() const;
@@ -44,14 +48,16 @@ template <typename T>
 Vec<T>::Vec() : vecSize(), vecCapacity(), arr(nullptr) {}
 
 template <typename T>
-Vec<T>::Vec(const std::size_t size) : vecSize(size), vecCapacity(0), arr(new T[size]) {
+Vec<T>::Vec(const std::size_t size)
+    : vecSize(size), vecCapacity(0), arr(new T[size]) {
     if (arr == nullptr) {
         throw std::bad_array_new_length();
     }
 }
 
 template <typename T>
-Vec<T>::Vec(std::initializer_list<T> l) : vecSize(l.size), vecCapacity(0), arr(new T[vecSize]) {
+Vec<T>::Vec(std::initializer_list<T> l)
+    : vecSize(l.size), vecCapacity(0), arr(new T[vecSize]) {
     if (arr == nullptr) {
         throw std::bad_alloc();
     }
@@ -149,6 +155,80 @@ void Vec<T>::pop_back() {
         throw std::underflow_error("Can not pop nothing.");
     }
     vecCapacity--;
+}
+
+template <typename T>
+void Vec<T>::swap(Vec& other) {
+    int tempSize;
+    int tempCapacity;
+    T* tempArr;
+
+    tempSize = other.vecSize;
+    tempCapacity = other.vecCapacity;
+    tempArr = other.arr;
+
+    other.vecSize = vecSize;
+    other.vecCapacity = vecCapacity;
+    other.arr = arr;
+
+    vecSize = tempSize;
+    vecCapacity = tempCapacity;
+    arr = tempArr;
+}
+
+template <typename T>
+void Vec<T>::clear() {
+    delete[] arr;
+    arr = new T[vecSize];
+}
+
+template <typename T>
+void Vec<T>::erase(const std::size_t index) {
+    if (index > vecSize) {
+        throw std::out_of_range("Cannot erase beyond vector.");
+    }
+
+    for (std::size_t i = index; i < vecSize; i++) {
+        arr[i] = arr[i + 1];
+    }
+    arr[vecSize - 1] = 0;
+}
+
+template <typename T>
+void Vec<T>::resize(const std::size_t newSize) {
+    vecSize = newSize;
+    T* temp = new T[newSize];
+
+    delete[] arr;
+    arr = temp;
+}
+
+template <typename T>
+void Vec<T>::insert(const std::size_t index, const T data) {
+    if (vecCapacity == vecSize) {
+        T* temp = new T[vecSize + 5];
+        if (temp == nullptr) {
+            throw std::bad_alloc();
+        }
+
+        for (std::size_t i = 0; i < vecSize; i++) {
+            temp[i] = arr[i];
+        }
+
+        delete[] arr;
+        vecSize += 5;
+        arr = temp;
+    }
+
+    if (index > vecSize) {
+        throw std::out_of_range("Cannot insert beyond vector.");
+    }
+
+    for (std::size_t i = vecSize - 1; i > index; i--) {
+        std::printf("In this loop!\n");
+        arr[i] = arr[i - 1];
+    }
+    arr[index] = data;
 }
 
 template <typename T>
