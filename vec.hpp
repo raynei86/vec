@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <initializer_list>
-#include <iterator>
 #include <stdexcept>
 
  // TODO: Const operators
