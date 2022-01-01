@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <initializer_list>
-#include <iostream>
 #include <iterator>
 #include <stdexcept>
 
@@ -40,11 +39,7 @@ class Vec {
 };
 
 template <typename T>
-Vec<T>::Vec() : max(), capacity(), arr(nullptr) {
-    if (arr == nullptr) {
-        throw std::bad_alloc();
-    }
-}
+Vec<T>::Vec() : max(), capacity(), arr(nullptr) {}
 
 template <typename T>
 Vec<T>::Vec(const std::size_t size) : max(size), arr(new T[size]) {
