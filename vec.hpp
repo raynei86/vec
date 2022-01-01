@@ -26,7 +26,7 @@ class Vec {
     Vec(const Vec&& other);
     ~Vec();
 
-    Vec& operator=(const Vec& other) const;
+    Vec& operator=(const Vec& other);
     Vec& operator=(const Vec&& other);
     T operator[](std::size_t index) const;
 
@@ -92,8 +92,16 @@ Vec<T>::~Vec() {
 }
 
 template <typename T>
-Vec<T>& Vec<T>::operator=(const Vec& other) const {
-    return Vec(other);
+Vec<T>& Vec<T>::operator=(const Vec& other) {
+    delete [] arr;
+
+    vecSize = other.vecSize;
+    vecCapacity = other.vecCapacity;
+    arr = new T[vecCapacity];
+
+    for (int i = 0; i < vecCapacity; i++) {
+       arr[i] = other.arr[i];
+    }
 }
 
 template <typename T>
