@@ -99,7 +99,7 @@ Vec<T>& Vec<T>::operator=(const Vec& other) {
     arr = new T[vecCapacity];
 
     if (arr == nullptr) {
-        throw std::bad_alloc;
+        throw std::bad_alloc();
     }
 
     for (int i = 0; i < vecCapacity; i++) {
