@@ -21,11 +21,13 @@ class Vec {
    public:
     Vec();
     Vec(std::size_t size);
-    Vec(std::initializer_list<T> l);
+    Vec(const std::initializer_list<T> l);
     Vec(const Vec& other);
+    Vec(const Vec&& other);
     ~Vec();
 
     Vec& operator=(const Vec& other) const;
+    Vec& operator=(const Vec&& other);
     T operator[](std::size_t index) const;
 
     void push_back(const T data);
@@ -63,7 +65,9 @@ Vec<T>::Vec(std::initializer_list<T> l) : vecSize(l.size), arr(new T[vecSize]) {
 
 template <typename T>
 Vec<T>::Vec(const Vec& other)
-    : vecSize(other.vecSize), vecCapacity(other.vecCapacity), arr(new T[vecSize]) {
+    : vecSize(other.vecSize),
+      vecCapacity(other.vecCapacity),
+      arr(new T[vecSize]) {
     if (arr == nullptr) {
         throw std::bad_alloc();
     }
@@ -74,6 +78,15 @@ Vec<T>::Vec(const Vec& other)
 }
 
 template <typename T>
+Vec<T>::Vec(const Vec&& other)
+    : vecSize(other.vecSize), vecCapacity(other.vecCapacity), arr(other.arr) {
+
+    other.arr = nullptr;
+    other.vecSize = 0;
+    other.vecCapacity = 0;
+}
+
+template <typename T>
 Vec<T>::~Vec() {
     delete[] arr;
 }
@@ -81,6 +94,21 @@ Vec<T>::~Vec() {
 template <typename T>
 Vec<T>& Vec<T>::operator=(const Vec& other) const {
     return Vec(other);
+}
+
+template <typename T>
+Vec<T>& Vec<T>::operator=(const Vec<T>&& other) {
+    delete[] arr;
+
+    vecSize = other.vecSize;
+    vecCapacity = other.vecCapacity;
+    arr = other.arr;
+
+    other.arr = nullptr;
+    other.vecSize = 0;
+    other.vecCapacity = 0;
+
+    return *this;
 }
 
 template <typename T>
