@@ -225,7 +225,6 @@ void Vec<T>::insert(const std::size_t index, const T data) {
     }
 
     for (std::size_t i = vecSize - 1; i > index; i--) {
-        std::printf("In this loop!\n");
         arr[i] = arr[i - 1];
     }
     arr[index] = data;
@@ -262,7 +261,7 @@ T* Vec<T>::begin() const {
 
 template <typename T>
 T* Vec<T>::end() const {
-    T* temp = &arr[vecCapacity];
+    T* temp = &arr[vecSize];
     if (temp == nullptr) {
         throw std::bad_alloc();
     }
