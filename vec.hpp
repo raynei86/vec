@@ -5,17 +5,17 @@
 #include <initializer_list>
 #include <stdexcept>
 
- // TODO: Const operators
- // TODO: Move constructor
- // TODO: Implement allocator
- // TODO: Incorporate Iterators
- // TODO: Implement all the other functions
+// TODO: Const operators
+// TODO: Move constructor
+// TODO: Implement allocator
+// TODO: Incorporate Iterators
+// TODO: Implement all the other functions
 
 template <typename T>
 class Vec {
    private:
-    std::size_t max;
-    std::size_t capacity;
+    std::size_t vecSize;
+    std::size_t vecCapacity;
     T* arr;
 
    public:
@@ -32,23 +32,24 @@ class Vec {
     void pop_back();
 
     std::size_t size() const;
+    std::size_t capacity() const;
 
     T* begin() const;
     T* end() const;
 };
 
 template <typename T>
-Vec<T>::Vec() : max(), capacity(), arr(nullptr) {}
+Vec<T>::Vec() : vecSize(), vecCapacity(), arr(nullptr) {}
 
 template <typename T>
-Vec<T>::Vec(const std::size_t size) : max(size), arr(new T[size]) {
+Vec<T>::Vec(const std::size_t size) : vecSize(size), arr(new T[size]) {
     if (arr == nullptr) {
         throw std::bad_array_new_length();
     }
 }
 
 template <typename T>
-Vec<T>::Vec(std::initializer_list<T> l) : max(l.size), arr(new T[max]) {
+Vec<T>::Vec(std::initializer_list<T> l) : vecSize(l.size), arr(new T[vecSize]) {
     if (arr == nullptr) {
         throw std::bad_alloc();
     }
@@ -62,12 +63,12 @@ Vec<T>::Vec(std::initializer_list<T> l) : max(l.size), arr(new T[max]) {
 
 template <typename T>
 Vec<T>::Vec(const Vec& other)
-    : max(other.max), capacity(other.capacity), arr(new T[max]) {
+    : vecSize(other.vecSize), vecCapacity(other.vecCapacity), arr(new T[vecSize]) {
     if (arr == nullptr) {
         throw std::bad_alloc();
     }
 
-    for (std::size_t i = 0; i < other.max; i++) {
+    for (std::size_t i = 0; i < other.vecSize; i++) {
         this->arr[i] = other.arr[i];
     }
 }
@@ -84,41 +85,46 @@ Vec<T>& Vec<T>::operator=(const Vec& other) const {
 
 template <typename T>
 void Vec<T>::push_back(const T data) {
-    if (capacity >= max) {
-        T* temp = new T[max + 5];
+    if (vecCapacity >= vecSize) {
+        T* temp = new T[vecSize + 5];
         if (temp == nullptr) {
             throw std::bad_alloc();
         }
 
-        for (std::size_t i = 0; i < max; i++) {
+        for (std::size_t i = 0; i < vecSize; i++) {
             temp[i] = arr[i];
         }
 
-        delete [] arr;
-        max += 5;
+        delete[] arr;
+        vecSize += 5;
         arr = temp;
     }
 
-    arr[capacity] = data;
-    capacity++;
+    arr[vecCapacity] = data;
+    vecCapacity++;
 }
 
 template <typename T>
 void Vec<T>::pop_back() {
-    if (capacity == 0) {
+    if (vecCapacity == 0) {
         throw std::underflow_error("Can not pop nothing.");
     }
-    capacity--;
+    vecCapacity--;
 }
 
 template <typename T>
 std::size_t Vec<T>::size() const {
-   return max;
+    return vecSize;
+}
+
+template <typename T>
+std::size_t Vec<T>::capacity() const {
+    return vecCapacity;
 }
 
 template <typename T>
 T Vec<T>::operator[](std::size_t index) const {
-    if (index >= max) {
+    if (index >= vecSize) {
         throw std::out_of_range("The given index is out of bounds.");
     }
 
@@ -137,7 +143,7 @@ T* Vec<T>::begin() const {
 
 template <typename T>
 T* Vec<T>::end() const {
-    T* temp = &arr[capacity];
+    T* temp = &arr[vecCapacity];
     if (temp == nullptr) {
         throw std::bad_alloc();
     }
