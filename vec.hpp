@@ -44,14 +44,14 @@ template <typename T>
 Vec<T>::Vec() : vecSize(), vecCapacity(), arr(nullptr) {}
 
 template <typename T>
-Vec<T>::Vec(const std::size_t size) : vecSize(size), arr(new T[size]) {
+Vec<T>::Vec(const std::size_t size) : vecSize(size), vecCapacity(0), arr(new T[size]) {
     if (arr == nullptr) {
         throw std::bad_array_new_length();
     }
 }
 
 template <typename T>
-Vec<T>::Vec(std::initializer_list<T> l) : vecSize(l.size), arr(new T[vecSize]) {
+Vec<T>::Vec(std::initializer_list<T> l) : vecSize(l.size), vecCapacity(0), arr(new T[vecSize]) {
     if (arr == nullptr) {
         throw std::bad_alloc();
     }
@@ -80,7 +80,6 @@ Vec<T>::Vec(const Vec& other)
 template <typename T>
 Vec<T>::Vec(const Vec&& other)
     : vecSize(other.vecSize), vecCapacity(other.vecCapacity), arr(other.arr) {
-
     other.arr = nullptr;
     other.vecSize = 0;
     other.vecCapacity = 0;
@@ -93,14 +92,18 @@ Vec<T>::~Vec() {
 
 template <typename T>
 Vec<T>& Vec<T>::operator=(const Vec& other) {
-    delete [] arr;
+    delete[] arr;
 
     vecSize = other.vecSize;
     vecCapacity = other.vecCapacity;
     arr = new T[vecCapacity];
 
+    if (arr == nullptr) {
+        throw std::bad_alloc;
+    }
+
     for (int i = 0; i < vecCapacity; i++) {
-       arr[i] = other.arr[i];
+        arr[i] = other.arr[i];
     }
 }
 
