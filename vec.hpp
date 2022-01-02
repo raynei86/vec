@@ -5,6 +5,8 @@
 #include <initializer_list>
 #include <stdexcept>
 
+#include "iterator.hpp"
+
 // TODO: Const operators
 // TODO: Implement allocator
 // TODO: Incorporate Iterators
@@ -33,15 +35,16 @@ class Vec {
     void pop_back();
     void swap(Vec& other);
     void clear();
-    void erase(const std::size_t index);
+    // void erase(const std::size_t index);
+    void erase(Iterator<T> itr);
     void resize(const std::size_t newSize);
     void insert(const std::size_t index, const T data);
 
     std::size_t size() const;
     std::size_t capacity() const;
 
-    T* begin() const;
-    T* end() const;
+    Iterator<T> begin() const;
+    Iterator<T> end() const;
 };
 
 template <typename T>
@@ -92,9 +95,7 @@ Vec<T>::Vec(const Vec&& other)
 }
 
 template <typename T>
-Vec<T>::~Vec() {
-    delete[] arr;
-}
+Vec<T>::~Vec() = default;
 
 template <typename T>
 Vec<T>& Vec<T>::operator=(const Vec& other) {
@@ -183,21 +184,25 @@ void Vec<T>::clear() {
 }
 
 template <typename T>
-void Vec<T>::erase(const std::size_t index) {
-    if (index > vecSize) {
-        throw std::out_of_range("Cannot erase beyond vector.");
-    }
+void Vec<T>::erase(Iterator<T> itr) {
+     if (itr >= end()) {
+         throw std::out_of_range("Cannot erase beyond vector.");
+     }
 
-    for (std::size_t i = index; i < vecSize; i++) {
-        arr[i] = arr[i + 1];
+    for (auto i = itr; i <= end() - 1; i++) {
+        *i = *(i + 1);
     }
-    arr[vecSize - 1] = 0;
+    resize(vecSize - 1);
 }
 
 template <typename T>
 void Vec<T>::resize(const std::size_t newSize) {
     vecSize = newSize;
     T* temp = new T[newSize];
+
+    for (std::size_t i = 0; i <= newSize; i++) {
+       temp[i] = arr[i];
+    }
 
     delete[] arr;
     arr = temp;
@@ -250,21 +255,15 @@ T Vec<T>::operator[](std::size_t index) const {
 }
 
 template <typename T>
-T* Vec<T>::begin() const {
-    T* temp = &arr[0];
-    if (temp == nullptr) {
-        throw std::bad_alloc();
-    }
+Iterator<T> Vec<T>::begin() const {
+    Iterator<T> temp(&arr[0]);
 
     return temp;
 }
 
 template <typename T>
-T* Vec<T>::end() const {
-    T* temp = &arr[vecSize];
-    if (temp == nullptr) {
-        throw std::bad_alloc();
-    }
+Iterator<T> Vec<T>::end() const {
+    Iterator<T> temp(&arr[vecSize]);
 
     return temp;
 }
