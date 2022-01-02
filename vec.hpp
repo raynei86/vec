@@ -35,7 +35,6 @@ class Vec {
     void pop_back();
     void swap(Vec& other);
     void clear();
-    // void erase(const std::size_t index);
     void erase(Iterator<T> itr);
     void resize(const std::size_t newSize);
     void insert(const std::size_t index, const T data);
@@ -60,7 +59,7 @@ Vec<T>::Vec(const std::size_t size)
 
 template <typename T>
 Vec<T>::Vec(std::initializer_list<T> l)
-    : vecSize(l.size), vecCapacity(0), arr(new T[vecSize]) {
+    : vecSize(l.size()), vecCapacity(vecSize), arr(new T[vecSize]) {
     if (arr == nullptr) {
         throw std::bad_alloc();
     }
@@ -137,7 +136,7 @@ void Vec<T>::push_back(const T data) {
             throw std::bad_alloc();
         }
 
-        for (std::size_t i = 0; i < vecSize; i++) {
+        for (std::size_t i = 0; i < vecCapacity; i++) {
             temp[i] = arr[i];
         }
 
@@ -155,7 +154,18 @@ void Vec<T>::pop_back() {
     if (vecCapacity == 0) {
         throw std::underflow_error("Can not pop nothing.");
     }
-    vecCapacity--;
+    T* temp = new T[vecSize - 1];
+    if (temp == nullptr) {
+        throw std::bad_alloc();
+    }
+
+    for (std::size_t i = 0; i < vecCapacity - 1; i++) {
+        temp[i] = arr[i];
+    }
+
+    delete[] arr;
+    vecSize--;
+    arr = temp;
 }
 
 template <typename T>
@@ -185,9 +195,9 @@ void Vec<T>::clear() {
 
 template <typename T>
 void Vec<T>::erase(Iterator<T> itr) {
-     if (itr >= end()) {
-         throw std::out_of_range("Cannot erase beyond vector.");
-     }
+    if (itr >= end()) {
+        throw std::out_of_range("Cannot erase beyond vector.");
+    }
 
     for (auto i = itr; i <= end() - 1; i++) {
         *i = *(i + 1);
@@ -201,7 +211,7 @@ void Vec<T>::resize(const std::size_t newSize) {
     T* temp = new T[newSize];
 
     for (std::size_t i = 0; i <= newSize; i++) {
-       temp[i] = arr[i];
+        temp[i] = arr[i];
     }
 
     delete[] arr;
