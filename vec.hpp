@@ -195,7 +195,7 @@ void Vec<T>::clear() {
 
 template <typename T>
 void Vec<T>::erase(Iterator<T> itr) {
-    if (itr >= end()) {
+    if (itr > end()) {
         throw std::out_of_range("Cannot erase beyond vector.");
     }
 
