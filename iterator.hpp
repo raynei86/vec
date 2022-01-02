@@ -60,7 +60,7 @@ template <typename T>
 Iterator<T> Iterator<T>::operator++(int) {
     Iterator<T> temp = *this;
     ptr++;
-    return *temp;
+    return temp;
 }
 
 template <typename T>
@@ -79,7 +79,7 @@ template <typename T>
 Iterator<T> Iterator<T>::operator--(int) {
     Iterator<T> temp = *this;
     ptr++;
-    return *temp;
+    return temp;
 }
 
 template <typename T>
