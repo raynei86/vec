@@ -15,6 +15,7 @@ class Iterator {
 
     T& data();
     T& operator*();
+    T* raw();
 
     Iterator<T>& operator++();
     Iterator<T> operator++(int);
@@ -22,6 +23,7 @@ class Iterator {
     Iterator<T>& operator--();
     Iterator<T> operator--(int);
     Iterator<T> operator-(const unsigned int moveLength);
+    T& operator[](const unsigned int index);
 
     bool operator!=(const Iterator<T>& other) const;
     bool operator==(const Iterator<T>& other) const;
@@ -65,7 +67,7 @@ Iterator<T> Iterator<T>::operator++(int) {
 
 template <typename T>
 Iterator<T> Iterator<T>::operator+(const unsigned int moveLength) {
-    Iterator<T> temp (ptr + moveLength);
+    Iterator<T> temp(ptr + moveLength);
     return temp;
 }
 
@@ -84,8 +86,13 @@ Iterator<T> Iterator<T>::operator--(int) {
 
 template <typename T>
 Iterator<T> Iterator<T>::operator-(const unsigned int moveLength) {
-    Iterator<T> temp (ptr - moveLength);
+    Iterator<T> temp(ptr - moveLength);
     return temp;
+}
+
+template <typename T>
+T& Iterator<T>::operator[](const unsigned int index) {
+    return *(ptr + index);
 }
 
 template <typename T>
@@ -126,5 +133,10 @@ bool Iterator<T>::operator>=(const Iterator<T>& other) const {
 template <typename T>
 T& Iterator<T>::data() {
     return *ptr;
+}
+
+template <typename T>
+T* Iterator<T>::raw() {
+    return ptr;
 }
 #endif  // ITERATOR_HPP

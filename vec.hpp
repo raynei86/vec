@@ -30,20 +30,21 @@ class Vec {
     Vec& operator=(const Vec& other);
     Vec& operator=(const Vec&& other);
     T operator[](std::size_t index) const;
+    T operator[](Iterator<T>) const;
 
     void push_back(const T data);
     void pop_back();
     void swap(Vec& other);
     void clear();
-    void erase(Iterator<T> itr);
+    void erase(Iterator<T> pos);
     void resize(const std::size_t newSize);
-    void insert(const std::size_t index, const T data);
+    void insert(Iterator<T> pos, const T data);
 
     std::size_t size() const;
     std::size_t capacity() const;
 
-    Iterator<T> begin() const;
-    Iterator<T> end() const;
+    Iterator<T> begin();
+    Iterator<T> end();
 };
 
 template <typename T>
@@ -154,6 +155,7 @@ void Vec<T>::pop_back() {
     if (vecCapacity == 0) {
         throw std::underflow_error("Can not pop nothing.");
     }
+
     T* temp = new T[vecSize - 1];
     if (temp == nullptr) {
         throw std::bad_alloc();
@@ -207,6 +209,10 @@ void Vec<T>::erase(Iterator<T> itr) {
 
 template <typename T>
 void Vec<T>::resize(const std::size_t newSize) {
+    if (newSize < 0) {
+        throw std::length_error("Can not resize below zero.");
+    }
+
     vecSize = newSize;
     T* temp = new T[newSize];
 
@@ -216,33 +222,25 @@ void Vec<T>::resize(const std::size_t newSize) {
 
     delete[] arr;
     arr = temp;
+    vecSize = newSize;
 }
 
+// TODO: FIX THE PART WHERE POINTER IS LEFT TO POINT TO BS
 template <typename T>
-void Vec<T>::insert(const std::size_t index, const T data) {
-    if (vecCapacity == vecSize) {
-        T* temp = new T[vecSize + 5];
-        if (temp == nullptr) {
-            throw std::bad_alloc();
-        }
-
-        for (std::size_t i = 0; i < vecSize; i++) {
-            temp[i] = arr[i];
-        }
-
-        delete[] arr;
-        vecSize += 5;
-        arr = temp;
+void Vec<T>::insert(Iterator<T> pos, const T data) {
+    if (vecCapacity >= vecSize) {
+        resize(++vecSize);
     }
 
-    if (index > vecSize) {
+    if (pos > end()) {
         throw std::out_of_range("Cannot insert beyond vector.");
     }
 
-    for (std::size_t i = vecSize - 1; i > index; i--) {
-        arr[i] = arr[i - 1];
+    for (auto i = pos + 1; i < end(); i++) {
+        *i = *(++i);
     }
-    arr[index] = data;
+
+    *pos = data;
 }
 
 template <typename T>
@@ -265,15 +263,24 @@ T Vec<T>::operator[](std::size_t index) const {
 }
 
 template <typename T>
-Iterator<T> Vec<T>::begin() const {
-    Iterator<T> temp(&arr[0]);
+T Vec<T>::operator[](Iterator<T> index) const {
+    if (index >= vecSize) {
+        throw std::out_of_range("The given index is out of bounds.");
+    }
+
+    return *index;
+}
+
+template <typename T>
+Iterator<T> Vec<T>::begin() {
+    Iterator<T> temp(arr);
 
     return temp;
 }
 
 template <typename T>
-Iterator<T> Vec<T>::end() const {
-    Iterator<T> temp(&arr[vecSize]);
+Iterator<T> Vec<T>::end() {
+    Iterator<T> temp(arr + vecSize);
 
     return temp;
 }
