@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <initializer_list>
 #include <stdexcept>
+#include <algorithm>
 
 #include "iterator.hpp"
 
@@ -84,10 +85,8 @@ Vec<T>::Vec(const Vec& other)
 
 template <typename T>
 Vec<T>::Vec(const Vec&& other)
-    : vecSize(other.vecSize), vecCapacity(other.vecCapacity), arr(other.arr) {
-    other.arr = nullptr;
-    other.vecSize = 0;
-    other.vecCapacity = 0;
+    : vecSize(0), vecCapacity(0), arr(nullptr) {
+    other.swap(*this);
 }
 
 template <typename T>
@@ -95,33 +94,14 @@ Vec<T>::~Vec() = default;
 
 template <typename T>
 Vec<T>& Vec<T>::operator=(const Vec& other) {
-    delete[] arr;
-
-    vecSize = other.vecSize;
-    vecCapacity = other.vecCapacity;
-    arr = new T[vecCapacity];
-
-    if (arr == nullptr) {
-        throw std::bad_alloc();
-    }
-
-    for (int i = 0; i < vecCapacity; i++) {
-        arr[i] = other.arr[i];
-    }
+    Vec<T> copy(other);
+    copy.swap(*this);
+    return *this;
 }
 
 template <typename T>
 Vec<T>& Vec<T>::operator=(const Vec<T>&& other) {
-    delete[] arr;
-
-    vecSize = other.vecSize;
-    vecCapacity = other.vecCapacity;
-    arr = other.arr;
-
-    other.arr = nullptr;
-    other.vecSize = 0;
-    other.vecCapacity = 0;
-
+    other.swap(*this);
     return *this;
 }
 
@@ -168,21 +148,9 @@ void Vec<T>::pop_back() {
 
 template <typename T>
 void Vec<T>::swap(Vec& other) {
-    int tempSize;
-    int tempCapacity;
-    T* tempArr;
-
-    tempSize = other.vecSize;
-    tempCapacity = other.vecCapacity;
-    tempArr = other.arr;
-
-    other.vecSize = vecSize;
-    other.vecCapacity = vecCapacity;
-    other.arr = arr;
-
-    vecSize = tempSize;
-    vecCapacity = tempCapacity;
-    arr = tempArr;
+    std::swap(arr, other.arr);
+    std::swap(vecCapacity, other.vecCapacity);
+    std::swap(vecSize, other.vecSize);
 }
 
 template <typename T>
@@ -221,7 +189,6 @@ void Vec<T>::resize(const std::size_t newSize) {
     vecSize = newSize;
 }
 
-// TODO: FIX THE PART WHERE POINTER IS LEFT TO POINT TO BS
 template <typename T>
 void Vec<T>::insert(Iterator<T> pos, const T data) {
     if (vecCapacity >= vecSize) {
