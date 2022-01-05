@@ -7,11 +7,6 @@
 
 #include "iterator.hpp"
 
-// TODO: Const operators
-// TODO: Implement allocator
-// TODO: Incorporate Iterators
-// TODO: Implement all the other functions
-
 template <typename T>
 class Vec {
    private:
@@ -20,6 +15,7 @@ class Vec {
     T* arr;
 
    public:
+
     Vec();
     Vec(std::size_t size);
     Vec(const std::initializer_list<T> l);
@@ -229,7 +225,7 @@ void Vec<T>::resize(const std::size_t newSize) {
 template <typename T>
 void Vec<T>::insert(Iterator<T> pos, const T data) {
     if (vecCapacity >= vecSize) {
-        resize(++vecSize);
+       resize(vecSize + 1);
     }
 
     if (pos > end()) {
