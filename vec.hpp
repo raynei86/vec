@@ -21,11 +21,11 @@ class Vec {
     Vec(std::size_t size);
     Vec(const std::initializer_list<T> l);
     Vec(const Vec& other);
-    Vec(const Vec&& other);
+    Vec(const Vec&& other) noexcept;
     ~Vec();
 
     Vec& operator=(const Vec& other);
-    Vec& operator=(const Vec&& other);
+    Vec& operator=(const Vec&& other) noexcept;
     T operator[](std::size_t index) const;
     T operator[](Iterator<T>) const;
 
@@ -84,7 +84,7 @@ Vec<T>::Vec(const Vec& other)
 }
 
 template <typename T>
-Vec<T>::Vec(const Vec&& other)
+Vec<T>::Vec(const Vec&& other) noexcept
     : vecSize(0), vecCapacity(0), arr(nullptr) {
     other.swap(*this);
 }
@@ -100,7 +100,7 @@ Vec<T>& Vec<T>::operator=(const Vec& other) {
 }
 
 template <typename T>
-Vec<T>& Vec<T>::operator=(const Vec<T>&& other) {
+Vec<T>& Vec<T>::operator=(const Vec<T>&& other) noexcept {
     other.swap(*this);
     return *this;
 }
