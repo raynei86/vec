@@ -3,17 +3,19 @@ SOURCE	= main.cpp
 HEADER	=
 OUT	= vec
 CC	 = clang++
-FLAGS	 = -c -Wall -Wextra -Werror -pedantic -std=c++17
-LFLAGS	 =
+FLAGS	 = -c -g -Wall -Wextra -Werror -pedantic -std=c++17
+LFLAGS	 = -fsanitize=address -fno-omit-frame-pointer
+# LFLAGS	 = -fsanitize=memory -fPIE -pie  -fno-omit-frame-pointer
+# LFLAGS	 = -fsanitize=undefined -fno-omit-frame-pointer
 
 all: $(OBJS)
-	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
+	$(CC) $(SOURCE) -o $(OUT) $(LFLAGS)
 
-main.o: main.cpp
+main.o: main.cpp vec.hpp iterator.hpp
 	 $(CC) $(FLAGS) main.cpp
 
 tidy:
-	clang-tidy --checks='modernize*' vec.hpp -- -std=c++17
+	clang-tidy *.hpp -- -std=c++17
 
 clean:
 	rm -f $(OBJS) $(OUT)
