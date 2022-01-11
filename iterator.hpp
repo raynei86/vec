@@ -25,12 +25,12 @@ class Iterator {
     Iterator<T> operator-(const unsigned int moveLength);
     T& operator[](const unsigned int index);
 
-    bool operator!=(const Iterator<T>& other) const;
-    bool operator==(const Iterator<T>& other) const;
-    bool operator<(const Iterator<T>& other) const;
-    bool operator<=(const Iterator<T>& other) const;
-    bool operator>(const Iterator<T>& other) const;
-    bool operator>=(const Iterator<T>& other) const;
+    bool operator!=(const Iterator<T>& rhs) const;
+    bool operator==(const Iterator<T>& rhs) const;
+    bool operator<(const Iterator<T>& rhs) const;
+    bool operator<=(const Iterator<T>& rhs) const;
+    bool operator>(const Iterator<T>& rhs) const;
+    bool operator>=(const Iterator<T>& rhs) const;
 };
 
 template <typename T>
@@ -101,18 +101,18 @@ T& Iterator<T>::operator*() {
 }
 
 template <typename T>
-bool Iterator<T>::operator!=(const Iterator<T>& other) const {
-    return ptr != other.ptr;
+bool Iterator<T>::operator!=(const Iterator<T>& rhs) const {
+    return ptr != rhs.ptr;
 }
 
 template <typename T>
-bool Iterator<T>::operator==(const Iterator<T>& other) const {
-    return ptr == other.ptr;
+bool Iterator<T>::operator==(const Iterator<T>& rhs) const {
+    return ptr == rhs.ptr;
 }
 
 template <typename T>
-bool Iterator<T>::operator<(const Iterator<T>& other) const {
-    return ptr < other.ptr;
+bool Iterator<T>::operator<(const Iterator<T>& rhs) const {
+    return ptr < rhs.ptr;
 }
 
 template <typename T>
@@ -121,13 +121,13 @@ bool Iterator<T>::operator<=(const Iterator<T>& other) const {
 }
 
 template <typename T>
-bool Iterator<T>::operator>(const Iterator<T>& other) const {
-    return ptr > other.ptr;
+bool Iterator<T>::operator>(const Iterator<T>& rhs) const {
+    return ptr > rhs.ptr;
 }
 
 template <typename T>
-bool Iterator<T>::operator>=(const Iterator<T>& other) const {
-    return ptr >= other.ptr;
+bool Iterator<T>::operator>=(const Iterator<T>& rhs) const {
+    return ptr >= rhs.ptr;
 }
 
 template <typename T>
