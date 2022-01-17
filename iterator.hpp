@@ -34,12 +34,6 @@ class Iterator {
 };
 
 template <typename T>
-class ConstIterator : Iterator<T> {
-   private:
-    T* const ptr;
-};
-
-template <typename T>
 Iterator<T>::Iterator() : ptr(nullptr) {}
 
 template <typename T>
