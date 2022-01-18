@@ -1,10 +1,11 @@
 #ifndef VEC_HPP
 #define VEC_HPP
 
+#include <algorithm>
 #include <cstddef>
+#include <cstdlib>
 #include <initializer_list>
 #include <stdexcept>
-#include <algorithm>
 
 #include "iterator.hpp"
 
@@ -16,7 +17,6 @@ class Vec {
     T* arr;
 
    public:
-
     Vec();
     Vec(std::size_t size);
     Vec(const std::initializer_list<T> l);
@@ -49,7 +49,9 @@ Vec<T>::Vec() : vecSize(), vecCapacity(), arr(nullptr) {}
 
 template <typename T>
 Vec<T>::Vec(const std::size_t size)
-    : vecSize(size), vecCapacity(0), arr(new T[size]) {
+    : vecSize(size),
+      vecCapacity(0),
+      arr(static_cast<T*>(std::malloc(sizeof(T) * size))) {
     if (arr == nullptr) {
         throw std::bad_array_new_length();
     }
@@ -57,7 +59,9 @@ Vec<T>::Vec(const std::size_t size)
 
 template <typename T>
 Vec<T>::Vec(std::initializer_list<T> l)
-    : vecSize(l.size()), vecCapacity(vecSize), arr(new T[vecSize]) {
+    : vecSize(l.size()),
+      vecCapacity(vecSize),
+      arr(static_cast<T*>(std::malloc(sizeof(T) * vecSize))) {
     if (arr == nullptr) {
         throw std::bad_alloc();
     }
@@ -73,7 +77,7 @@ template <typename T>
 Vec<T>::Vec(const Vec& other)
     : vecSize(other.vecSize),
       vecCapacity(other.vecCapacity),
-      arr(new T[vecSize]) {
+      arr(static_cast<T*>(std::malloc(sizeof(T) * vecSize))) {
     if (arr == nullptr) {
         throw std::bad_alloc();
     }
@@ -90,7 +94,9 @@ Vec<T>::Vec(const Vec&& other) noexcept
 }
 
 template <typename T>
-Vec<T>::~Vec() = default;
+Vec<T>::~Vec() {
+    std::free(arr);
+}
 
 template <typename T>
 Vec<T>& Vec<T>::operator=(const Vec& other) {
@@ -108,18 +114,7 @@ Vec<T>& Vec<T>::operator=(const Vec<T>&& other) noexcept {
 template <typename T>
 void Vec<T>::push_back(const T data) {
     if (vecCapacity >= vecSize) {
-        T* temp = new T[vecSize + 5];
-        if (temp == nullptr) {
-            throw std::bad_alloc();
-        }
-
-        for (std::size_t i = 0; i < vecCapacity; i++) {
-            temp[i] = arr[i];
-        }
-
-        delete[] arr;
-        vecSize += 5;
-        arr = temp;
+        resize(vecSize * 2);
     }
 
     arr[vecCapacity] = data;
@@ -132,18 +127,7 @@ void Vec<T>::pop_back() {
         throw std::underflow_error("Can not pop nothing.");
     }
 
-    T* temp = new T[vecSize - 1];
-    if (temp == nullptr) {
-        throw std::bad_alloc();
-    }
-
-    for (std::size_t i = 0; i < vecCapacity - 1; i++) {
-        temp[i] = arr[i];
-    }
-
-    delete[] arr;
-    vecSize--;
-    arr = temp;
+    resize(vecSize - 1);
 }
 
 template <typename T>
@@ -155,8 +139,8 @@ void Vec<T>::swap(Vec& other) {
 
 template <typename T>
 void Vec<T>::clear() {
-    delete[] arr;
-    arr = new T[vecSize];
+    ~Vec();
+    arr = static_cast<T*>(std::malloc(sizeof(T) * vecSize));
 }
 
 template <typename T>
@@ -168,6 +152,7 @@ void Vec<T>::erase(Iterator<T> itr) {
     for (auto i = itr; i <= end() - 1; i++) {
         *i = *(i + 1);
     }
+
     resize(vecSize - 1);
 }
 
@@ -178,29 +163,21 @@ void Vec<T>::resize(const std::size_t newSize) {
     }
 
     vecSize = newSize;
-    T* temp = new T[newSize];
-
-    for (std::size_t i = 0; i <= newSize; i++) {
-        temp[i] = arr[i];
-    }
-
-    delete[] arr;
-    arr = temp;
-    vecSize = newSize;
+    arr = static_cast<T*>(std::realloc(arr, sizeof(T) * vecSize));
 }
 
 template <typename T>
 void Vec<T>::insert(Iterator<T> pos, const T data) {
     if (vecCapacity >= vecSize) {
-       resize(vecSize + 1);
+        resize(vecSize + 1);
     }
 
     if (pos > end()) {
         throw std::out_of_range("Cannot insert beyond vector.");
     }
 
-    for (auto i = pos + 1; i < end(); i++) {
-        *i = *(++i);
+    for (auto i = end() - 1; i >= pos; --i) {
+        *i = *(i - 1);
     }
 
     *pos = data;
@@ -236,14 +213,14 @@ T Vec<T>::operator[](Iterator<T> index) const {
 
 template <typename T>
 Iterator<T> Vec<T>::begin() {
-    Iterator<T> temp(arr);
+    Iterator<T> temp(&arr[0]);
 
     return temp;
 }
 
 template <typename T>
 Iterator<T> Vec<T>::end() {
-    Iterator<T> temp(arr + vecSize);
+    Iterator<T> temp(&arr[vecSize]);
 
     return temp;
 }
