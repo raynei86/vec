@@ -12,7 +12,7 @@
 template <typename T>
 class Vec {
    private:
-    // Capacity is how much elemnts the vector has.
+    // Capacity is how much elements the vector has.
     // Size is the size allocated.
     std::size_t vecSize;
     std::size_t vecCapacity;
