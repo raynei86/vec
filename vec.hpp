@@ -12,11 +12,14 @@
 template <typename T>
 class Vec {
    private:
+    // Capacity is how much elemnts the vector has.
+    // Size is the size allocated.
     std::size_t vecSize;
     std::size_t vecCapacity;
     T* arr;
 
    public:
+    // Constructors
     Vec();
     Vec(std::size_t size);
     Vec(const std::initializer_list<T> l);
@@ -24,11 +27,13 @@ class Vec {
     Vec(const Vec&& other) noexcept;
     ~Vec();
 
+    // Operators
     Vec& operator=(const Vec& other);
     Vec& operator=(const Vec&& other) noexcept;
     T operator[](std::size_t index) const;
     T operator[](Iterator<T>) const;
 
+    // Modifier functions
     void push_back(const T data);
     void pop_back();
     void swap(Vec& other);
@@ -37,15 +42,18 @@ class Vec {
     void resize(const std::size_t newSize);
     void insert(Iterator<T> pos, const T data);
 
+    // Getters
     std::size_t size() const;
     std::size_t capacity() const;
 
+    // Iterator functions
     Iterator<T> begin();
     Iterator<T> end();
 };
 
+// Default constructor will set size and capacity to 0 and array to a nullptr
 template <typename T>
-Vec<T>::Vec() : vecSize(), vecCapacity(), arr(nullptr) {}
+Vec<T>::Vec() : vecSize(0), vecCapacity(0), arr(nullptr) {}
 
 template <typename T>
 Vec<T>::Vec(const std::size_t size)
@@ -176,6 +184,7 @@ void Vec<T>::insert(Iterator<T> pos, const T data) {
         throw std::out_of_range("Cannot insert beyond vector.");
     }
 
+    // Shift every element to the right to make space for insertion
     for (auto i = end() - 1; i >= pos; --i) {
         *i = *(i - 1);
     }
