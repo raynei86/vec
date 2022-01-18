@@ -12,10 +12,10 @@
 template <typename T>
 class Vec {
    private:
-    // Capacity is how much elements the vector has.
-    // Size is the size allocated.
-    std::size_t vecSize;
+    // Size is how much elements the vector has.
+    // Capacity is the size allocated.
     std::size_t vecCapacity;
+    std::size_t vecSize;
     T* arr;
 
    public:
@@ -40,6 +40,7 @@ class Vec {
     void clear();
     void erase(Iterator<T> pos);
     void resize(const std::size_t newSize);
+    void reserve(const std::size_t newCap);
     void insert(Iterator<T> pos, const T data);
 
     // Getters
@@ -53,12 +54,12 @@ class Vec {
 
 // Default constructor will set size and capacity to 0 and array to a nullptr
 template <typename T>
-Vec<T>::Vec() : vecSize(0), vecCapacity(0), arr(nullptr) {}
+Vec<T>::Vec() : vecCapacity(0), vecSize(0), arr(nullptr) {}
 
 template <typename T>
 Vec<T>::Vec(const std::size_t size)
-    : vecSize(size),
-      vecCapacity(0),
+    : vecCapacity(size),
+      vecSize(0),
       arr(static_cast<T*>(std::malloc(sizeof(T) * size))) {
     if (arr == nullptr) {
         throw std::bad_array_new_length();
@@ -67,9 +68,9 @@ Vec<T>::Vec(const std::size_t size)
 
 template <typename T>
 Vec<T>::Vec(std::initializer_list<T> l)
-    : vecSize(l.size()),
-      vecCapacity(vecSize),
-      arr(static_cast<T*>(std::malloc(sizeof(T) * vecSize))) {
+    : vecCapacity(l.size()),
+      vecSize(vecCapacity),
+      arr(static_cast<T*>(std::malloc(sizeof(T) * vecCapacity))) {
     if (arr == nullptr) {
         throw std::bad_alloc();
     }
@@ -83,21 +84,21 @@ Vec<T>::Vec(std::initializer_list<T> l)
 
 template <typename T>
 Vec<T>::Vec(const Vec& other)
-    : vecSize(other.vecSize),
-      vecCapacity(other.vecCapacity),
-      arr(static_cast<T*>(std::malloc(sizeof(T) * vecSize))) {
+    : vecCapacity(other.vecCapacity),
+      vecSize(other.vecSize),
+      arr(static_cast<T*>(std::malloc(sizeof(T) * vecCapacity))) {
     if (arr == nullptr) {
         throw std::bad_alloc();
     }
 
-    for (std::size_t i = 0; i < other.vecSize; i++) {
+    for (std::size_t i = 0; i < other.vecCapacity; i++) {
         this->arr[i] = other.arr[i];
     }
 }
 
 template <typename T>
 Vec<T>::Vec(const Vec&& other) noexcept
-    : vecSize(0), vecCapacity(0), arr(nullptr) {
+    : vecCapacity(0), vecSize(0), arr(nullptr) {
     other.swap(*this);
 }
 
@@ -121,34 +122,34 @@ Vec<T>& Vec<T>::operator=(const Vec<T>&& other) noexcept {
 
 template <typename T>
 void Vec<T>::push_back(const T data) {
-    if (vecCapacity >= vecSize) {
-        resize(vecSize * 2);
+    if (vecSize >= vecCapacity) {
+        reserve(vecCapacity * 2);
     }
 
-    arr[vecCapacity] = data;
-    vecCapacity++;
+    arr[vecSize] = data;
+    vecSize++;
 }
 
 template <typename T>
 void Vec<T>::pop_back() {
-    if (vecCapacity == 0) {
+    if (vecSize == 0) {
         throw std::underflow_error("Can not pop nothing.");
     }
 
-    resize(vecSize - 1);
+    resize(vecCapacity - 1);
 }
 
 template <typename T>
 void Vec<T>::swap(Vec& other) {
     std::swap(arr, other.arr);
-    std::swap(vecCapacity, other.vecCapacity);
     std::swap(vecSize, other.vecSize);
+    std::swap(vecCapacity, other.vecCapacity);
 }
 
 template <typename T>
 void Vec<T>::clear() {
     ~Vec();
-    arr = static_cast<T*>(std::malloc(sizeof(T) * vecSize));
+    arr = static_cast<T*>(std::malloc(sizeof(T) * vecCapacity));
 }
 
 template <typename T>
@@ -161,7 +162,7 @@ void Vec<T>::erase(Iterator<T> itr) {
         *i = *(i + 1);
     }
 
-    resize(vecSize - 1);
+    resize(vecCapacity - 1);
 }
 
 template <typename T>
@@ -170,14 +171,32 @@ void Vec<T>::resize(const std::size_t newSize) {
         throw std::length_error("Can not resize below zero.");
     }
 
+    if (newSize > vecSize) {
+    // This seems like a really stupid solution
+    arr = static_cast<T*>(std::realloc(arr, newSize));
+    arr = static_cast<T*>(std::realloc(arr, vecCapacity));
+    }
     vecSize = newSize;
-    arr = static_cast<T*>(std::realloc(arr, sizeof(T) * vecSize));
+}
+
+template <typename T>
+void Vec<T>::reserve(const std::size_t newCap) {
+    if (newCap <= vecCapacity) {
+        return;
+    }
+
+    if (newCap <= 0) {
+        clear();
+    }
+
+    vecCapacity = newCap;
+    arr = static_cast<T*>(std::realloc(arr, sizeof(T) * vecCapacity));
 }
 
 template <typename T>
 void Vec<T>::insert(Iterator<T> pos, const T data) {
-    if (vecCapacity >= vecSize) {
-        resize(vecSize + 1);
+    if (vecSize >= vecCapacity) {
+        reserve(vecCapacity + 1);
     }
 
     if (pos > end()) {
