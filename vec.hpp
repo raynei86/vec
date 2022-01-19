@@ -104,7 +104,9 @@ Vec<T>::Vec(const Vec&& other) noexcept
 
 template <typename T>
 Vec<T>::~Vec() {
-    std::free(arr);
+    if (arr != nullptr) {
+        std::free(arr);
+    }
 }
 
 template <typename T>
@@ -148,7 +150,7 @@ void Vec<T>::swap(Vec& other) {
 
 template <typename T>
 void Vec<T>::clear() {
-    ~Vec();
+    std::free(arr);
     arr = static_cast<T*>(std::malloc(sizeof(T) * vecCapacity));
 }
 
@@ -172,9 +174,9 @@ void Vec<T>::resize(const std::size_t newSize) {
     }
 
     if (newSize > vecSize) {
-    // This seems like a really stupid solution
-    arr = static_cast<T*>(std::realloc(arr, newSize));
-    arr = static_cast<T*>(std::realloc(arr, vecCapacity));
+        // This seems like a really stupid solution
+        arr = static_cast<T*>(std::realloc(arr, newSize));
+        arr = static_cast<T*>(std::realloc(arr, vecCapacity));
     }
     vecSize = newSize;
 }
@@ -196,7 +198,7 @@ void Vec<T>::reserve(const std::size_t newCap) {
 template <typename T>
 void Vec<T>::insert(Iterator<T> pos, const T data) {
     if (vecSize >= vecCapacity) {
-        reserve(vecCapacity + 1);
+        resize(vecCapacity + 1);
     }
 
     if (pos > end()) {
