@@ -48,8 +48,8 @@ class Vec {
     std::size_t capacity() const;
 
     // Access functions
-    const T* data() const;
-    T* data();
+    const T* data() const noexcept;
+    T* data() noexcept;
     const T& front() const;
     T& front();
     const T& back() const;
@@ -235,12 +235,12 @@ std::size_t Vec<T>::capacity() const {
 }
 
 template <typename T>
-const T* Vec<T>::data() const {
+const T* Vec<T>::data() const noexcept {
     return arr;
 }
 
 template <typename T>
-T* Vec<T>::data() {
+T* Vec<T>::data() noexcept{
     return arr;
 }
 
