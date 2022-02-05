@@ -138,7 +138,7 @@ void Vec<T>::pop_back() {
         throw std::underflow_error("Can not pop nothing.");
     }
 
-    resize(vecCapacity - 1);
+    resize(vecSize - 1);
 }
 
 template <typename T>
@@ -164,7 +164,7 @@ void Vec<T>::erase(Iterator<T> itr) {
         *i = *(i + 1);
     }
 
-    resize(vecCapacity - 1);
+    resize(vecSize - 1);
 }
 
 template <typename T>
@@ -197,8 +197,9 @@ void Vec<T>::reserve(const std::size_t newCap) {
 
 template <typename T>
 void Vec<T>::insert(Iterator<T> pos, const T data) {
+    ++vecSize;
     if (vecSize >= vecCapacity) {
-        resize(vecCapacity + 1);
+        resize(vecSize + 1);
     }
 
     if (pos > end()) {
