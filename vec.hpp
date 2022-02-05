@@ -150,6 +150,7 @@ void Vec<T>::swap(Vec& other) {
 
 template <typename T>
 void Vec<T>::clear() {
+    vecSize = 0;
     std::free(arr);
     arr = static_cast<T*>(std::malloc(sizeof(T) * vecCapacity));
 }
