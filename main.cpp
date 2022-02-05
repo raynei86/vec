@@ -43,7 +43,7 @@ int main() {
 
     std::cout << "\n----------\n";
 
-    test.erase(test.begin());
+    test.erase(0);
     std::cout << "Erase test: ";
     for (std::size_t it = 0; it < test.size(); it++) {
         std::cout << "[" << test[it] << "] ";
@@ -59,12 +59,20 @@ int main() {
 
     std::cout << "\n----------\n";
 
-    test.insert(test.begin(), 1);
+    test.insert(0, 1);
     std::cout << "Insert test: ";
     for (std::size_t it = 0; it < test.size(); it++) {
         std::cout << "[" << test[it] << "] ";
     }
     std::cout << "\n----------\n";
+
+    test.clear();
+    std::cout << "Clear test: ";
+    for (std::size_t it = 0; it < test.size(); it++) {
+        std::cout << "[" << test[it] << "] ";
+    }
+    std::cout << "\n----------\n";
+
     std::cout << "Test done.\n";
     return 0;
 }
