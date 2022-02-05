@@ -1,16 +1,16 @@
-# vec
-A custom C++ vector to practice modern c++  
+#+TITLE: vec
+A custom C++ vector to practice modern c++
 Definitely overengineered because I am trying to use modern features everywhere possible
 
-# Running
-```bash
+* Running
+#+BEGIN_SRC shell
 git clone https://github.com/raynei86/vec
 cd vec
 make && make run
-```
+#+END_SRC
 
-# TODO
-## Vector
+* TODO
+** Vector
 - [ ] Implement Allocator
 - [ ] Const operators
 - [ ] Full support of all std::vector functions
@@ -18,5 +18,5 @@ make && make run
 - [ ] Make more use of iterators
 - [ ] General code cleanup
 
-## Iterator
+** Iterators
 - [ ] Make it trackable with vector
