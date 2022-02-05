@@ -46,6 +46,11 @@ class Vec {
     // Getters
     std::size_t size() const;
     std::size_t capacity() const;
+    T* data() const;
+
+    // Access functions
+    T& front() const;
+    T& back() const;
 
     // Iterator functions
     Iterator<T> begin();
@@ -224,6 +229,21 @@ std::size_t Vec<T>::size() const {
 template <typename T>
 std::size_t Vec<T>::capacity() const {
     return vecCapacity;
+}
+
+template <typename T>
+T* Vec<T>::data() const {
+    return arr;
+}
+
+template <typename T>
+T& Vec<T>::front() const {
+    return &arr[0];
+}
+
+template <typename T>
+T& Vec<T>::back() const {
+    return &arr[vecSize];
 }
 
 template <typename T>
