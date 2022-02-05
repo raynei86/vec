@@ -12,9 +12,9 @@
 template <typename T>
 class Vec {
    private:
-    // Size is how much elements the vector has.
-    // Capacity is the size allocated.
+    // Size allocated
     std::size_t vecCapacity;
+    // Number of elements
     std::size_t vecSize;
     T* arr;
 
@@ -38,10 +38,10 @@ class Vec {
     void pop_back();
     void swap(Vec& other);
     void clear();
-    void erase(Iterator<T> pos);
+    void erase(std::size_t index);
     void resize(const std::size_t newSize);
     void reserve(const std::size_t newCap);
-    void insert(Iterator<T> pos, const T data);
+    void insert(std::size_t index, const T data);
 
     // Getters
     std::size_t size() const;
@@ -155,13 +155,13 @@ void Vec<T>::clear() {
 }
 
 template <typename T>
-void Vec<T>::erase(Iterator<T> itr) {
-    if (itr > end()) {
+void Vec<T>::erase(std::size_t index) {
+    if (index > vecSize) {
         throw std::out_of_range("Cannot erase beyond vector.");
     }
 
-    for (auto i = itr; i <= end() - 1; i++) {
-        *i = *(i + 1);
+    for (auto i = index; i <= vecSize - 1; i++) {
+        arr[i] = arr[i + 1];
     }
 
     resize(vecSize - 1);
@@ -196,22 +196,23 @@ void Vec<T>::reserve(const std::size_t newCap) {
 }
 
 template <typename T>
-void Vec<T>::insert(Iterator<T> pos, const T data) {
+void Vec<T>::insert(std::size_t index, const T data) {
     ++vecSize;
+
     if (vecSize >= vecCapacity) {
         resize(vecSize + 1);
     }
 
-    if (pos > end()) {
+    if (index > vecSize) {
         throw std::out_of_range("Cannot insert beyond vector.");
     }
 
     // Shift every element to the right to make space for insertion
-    for (auto i = end() - 1; i >= pos; --i) {
-        *i = *(i - 1);
+    for (auto i = vecSize - 1; i > index; --i) {
+        arr[i] = arr[i - 1];
     }
 
-    *pos = data;
+    arr[index] = data;
 }
 
 template <typename T>
