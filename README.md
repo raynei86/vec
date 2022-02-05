@@ -2,6 +2,13 @@
 A custom C++ vector to practice modern c++  
 Definitely overengineered because I am trying to use modern features everywhere possible
 
+# Running
+```bash
+git clone https://github.com/raynei86/vec
+cd vec
+make && make run
+```
+
 # TODO
 ## Vector
 - [ ] Implement Allocator
