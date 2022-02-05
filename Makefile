@@ -13,7 +13,8 @@ all: $(OBJS)
 	$(CC) $(SOURCE) -o $(OUT) $(LFLAGS)
 
 build/main.o: main.cpp vec.hpp iterator.hpp
-	 $(CC) $(FLAGS) main.cpp
+	$(CC) $(FLAGS) main.cpp
+	mv main.o build/main.o
 
 tidy:
 	clang-tidy *.hpp -- -std=c++17
