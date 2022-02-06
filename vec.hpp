@@ -7,8 +7,6 @@
 #include <initializer_list>
 #include <stdexcept>
 
-#include "iterator.hpp"
-
 template <typename T>
 class Vec {
    private:
@@ -19,6 +17,8 @@ class Vec {
     T* arr;
 
    public:
+    struct Iterator;
+
     // Constructors
     Vec();
     Vec(std::size_t size);
@@ -31,7 +31,7 @@ class Vec {
     Vec& operator=(const Vec& other);
     Vec& operator=(const Vec&& other) noexcept;
     T operator[](std::size_t index) const;
-    T operator[](Iterator<T>) const;
+    T operator[](Iterator) const;
 
     // Modifier functions
     void push_back(const T data);
@@ -56,8 +56,52 @@ class Vec {
     T& back();
 
     // Iterator functions
-    Iterator<T> begin();
-    Iterator<T> end();
+    Iterator begin();
+    Iterator end();
+
+    struct Iterator {
+        using iterator_category = std::bidirectional_iterator_tag;
+        using difference_type = std::ptrdiff_t;
+        using value_type = T;
+        using pointer = T*;
+        using reference = T&;
+
+       private:
+        pointer ptr;
+
+       public:
+        Iterator(pointer target);
+
+        reference operator*();
+        pointer raw();
+
+        Iterator& operator++();
+        Iterator operator++(int);
+        Iterator operator+(const unsigned int moveLength);
+        Iterator& operator--();
+        Iterator operator--(int);
+        Iterator operator-(const unsigned int moveLength);
+        Iterator& operator[](const unsigned int index);
+
+        friend bool operator!=(const Iterator& lhs, const Iterator& rhs) {
+            return lhs.ptr != rhs.ptr;
+        }
+        friend bool operator==(const Iterator& lhs, const Iterator& rhs) {
+            return lhs.ptr == rhs.ptr;
+        }
+        friend bool operator<(const Iterator& lhs, const Iterator& rhs) {
+            return lhs.ptr < rhs.ptr;
+        }
+        friend bool operator<=(const Iterator& lhs, const Iterator& rhs) {
+            return lhs.ptr <= rhs.ptr;
+        }
+        friend bool operator>(const Iterator& lhs, const Iterator& rhs) {
+            return lhs.ptr > rhs.ptr;
+        }
+        friend bool operator>=(const Iterator& lhs, const Iterator& rhs) {
+            return lhs.ptr >= rhs.ptr;
+        }
+    };
 };
 
 // Default constructor will set size and capacity to 0 and array to a nullptr
@@ -240,7 +284,7 @@ const T* Vec<T>::data() const noexcept {
 }
 
 template <typename T>
-T* Vec<T>::data() noexcept{
+T* Vec<T>::data() noexcept {
     return arr;
 }
 
@@ -274,7 +318,7 @@ T Vec<T>::operator[](std::size_t index) const {
 }
 
 template <typename T>
-T Vec<T>::operator[](Iterator<T> index) const {
+T Vec<T>::operator[](Iterator index) const {
     if (index >= vecSize) {
         throw std::out_of_range("The given index is out of bounds.");
     }
@@ -283,16 +327,74 @@ T Vec<T>::operator[](Iterator<T> index) const {
 }
 
 template <typename T>
-Iterator<T> Vec<T>::begin() {
-    Iterator<T> temp(&arr[0]);
+typename Vec<T>::Iterator Vec<T>::begin() {
+    Iterator temp(&arr[0]);
 
     return temp;
 }
 
 template <typename T>
-Iterator<T> Vec<T>::end() {
-    Iterator<T> temp(&arr[vecSize]);
+typename Vec<T>::Iterator Vec<T>::end() {
+    Iterator temp(&arr[vecSize]);
 
     return temp;
 }
+
+template <typename T>
+Vec<T>::Iterator::Iterator(T* target) : ptr(target) {}
+
+template <typename T>
+T& Vec<T>::Iterator::operator*() {
+    return *ptr;
+}
+
+template <typename T>
+T* Vec<T>::Iterator::raw() {
+    return ptr;
+}
+
+template <typename T>
+typename Vec<T>::Iterator& Vec<T>::Iterator::operator++() {
+    ++ptr;
+    return *this;
+}
+
+template <typename T>
+typename Vec<T>::Iterator Vec<T>::Iterator::operator++(int) {
+    Iterator temp = *this;
+    ++ptr;
+    return temp;
+}
+
+template <typename T>
+typename Vec<T>::Iterator Vec<T>::Iterator::operator+(const unsigned int moveLength) {
+    Iterator temp(ptr + moveLength);
+    return temp;
+}
+
+template <typename T>
+typename Vec<T>::Iterator& Vec<T>::Iterator::operator--() {
+    --ptr;
+    return *this;
+}
+
+template <typename T>
+typename Vec<T>::Iterator Vec<T>::Iterator::operator--(int) {
+    Iterator temp = *this;
+    --ptr;
+    return *temp;
+}
+
+template <typename T>
+typename Vec<T>::Iterator Vec<T>::Iterator::operator-(const unsigned int moveLength) {
+    Iterator temp(ptr - moveLength);
+    return temp;
+}
+
+template <typename T>
+typename Vec<T>::Iterator& Vec<T>::Iterator::operator[](
+    const unsigned int index) {
+    return *(ptr + index);
+}
+
 #endif  // VEC_HPP
