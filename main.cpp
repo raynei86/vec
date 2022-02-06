@@ -1,7 +1,5 @@
 #include <iostream>
-
-#include <string>
-#include "iterator.hpp"
+#include <algorithm>
 #include "vec.hpp"
 
 int main() {
@@ -68,6 +66,14 @@ int main() {
 
     test.clear();
     std::cout << "Clear test: ";
+    for (const auto& i : test) {
+        std::cout << "[" << i << "] ";
+    }
+    std::cout << "\n----------\n";
+
+
+    std::fill(test.begin(), test.end(), 1);
+    std::cout << "Fill test: ";
     for (const auto& i : test) {
         std::cout << "[" << i << "] ";
     }
