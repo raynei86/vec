@@ -1,6 +1,6 @@
 # vec
-A custom C++ vector to practice modern c++  
-Definitely overengineered because I am trying to use modern features everywhere possible
+A custom C++ vector to practice modern C++  
+Full of exceptions everywhere :D
 ​
 # Running
 ```bash
