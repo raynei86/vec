@@ -168,7 +168,8 @@ void Vec<T>::push_back(const T data) {
         reserve(vecCapacity * 2);
     }
 
-    arr[vecSize] = data;
+    T temp = data;
+    arr[vecSize] = temp;
     vecSize++;
 }
 
@@ -315,14 +316,14 @@ T Vec<T>::operator[](Iterator index) const {
 }
 
 template <typename T>
-typename Vec<T>::Iterator Vec<T>::begin() {
+auto Vec<T>::begin() -> Iterator {
     Iterator temp(&arr[0]);
 
     return temp;
 }
 
 template <typename T>
-typename Vec<T>::Iterator Vec<T>::end() {
+auto Vec<T>::end() -> Iterator {
     Iterator temp(&arr[vecSize]);
 
     return temp;
@@ -342,46 +343,45 @@ T* Vec<T>::Iterator::raw() {
 }
 
 template <typename T>
-typename Vec<T>::Iterator& Vec<T>::Iterator::operator++() {
+auto Vec<T>::Iterator::operator++() -> Iterator& {
     ++ptr;
     return *this;
 }
 
 template <typename T>
-typename Vec<T>::Iterator Vec<T>::Iterator::operator++(int) {
+auto Vec<T>::Iterator::operator++(int) -> Iterator {
     Iterator temp = *this;
     ++ptr;
     return temp;
 }
 
 template <typename T>
-typename Vec<T>::Iterator Vec<T>::Iterator::operator+(const unsigned int moveLength) {
+auto Vec<T>::Iterator::operator+(const unsigned int moveLength) -> Iterator {
     Iterator temp(ptr + moveLength);
     return temp;
 }
 
 template <typename T>
-typename Vec<T>::Iterator& Vec<T>::Iterator::operator--() {
+auto Vec<T>::Iterator::operator--() -> Iterator& {
     --ptr;
     return *this;
 }
 
 template <typename T>
-typename Vec<T>::Iterator Vec<T>::Iterator::operator--(int) {
+auto Vec<T>::Iterator::operator--(int) -> Iterator {
     Iterator temp = *this;
     --ptr;
     return *temp;
 }
 
 template <typename T>
-typename Vec<T>::Iterator Vec<T>::Iterator::operator-(const unsigned int moveLength) {
+auto Vec<T>::Iterator::operator-(const unsigned int moveLength) -> Iterator {
     Iterator temp(ptr - moveLength);
     return temp;
 }
 
 template <typename T>
-typename Vec<T>::Iterator& Vec<T>::Iterator::operator[](
-    const unsigned int index) {
+auto Vec<T>::Iterator::operator[](const unsigned int index) -> Iterator& {
     return *(ptr + index);
 }
 
