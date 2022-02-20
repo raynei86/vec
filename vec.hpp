@@ -351,7 +351,7 @@ auto Vec<T>::Iterator::operator++() -> Iterator& {
 template <typename T>
 auto Vec<T>::Iterator::operator++(int) -> Iterator {
     Iterator temp = *this;
-    ++ptr;
+    operator++();
     return temp;
 }
 
@@ -370,7 +370,7 @@ auto Vec<T>::Iterator::operator--() -> Iterator& {
 template <typename T>
 auto Vec<T>::Iterator::operator--(int) -> Iterator {
     Iterator temp = *this;
-    --ptr;
+    operator--();
     return *temp;
 }
 
