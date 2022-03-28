@@ -1,6 +1,7 @@
 # vec
 A custom C++ vector to practice modern C++  
 Full of exceptions everywhere :D
+Completed maybe?
 ​
 # Running
 ```bash
@@ -11,13 +12,13 @@ make && make run
 ​
 # TODO
 ## Vector
-- [ ] Implement Allocator
+- [x] Implement Allocator
 - [ ] Const operators
+- [ ] Operators
 - [ ] Full support of all std::vector functions
-- [ ] Keep track of iterator
-- [ ] Make more use of iterators
-- [ ] General code cleanup
+- [x] Keep track of iterator
+- [x] Make more use of iterators
 ​
 ## Iterator
-- [ ] Make it trackable with vector
+- [x] Make it trackable with vector
 ​
