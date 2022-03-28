@@ -21,8 +21,8 @@ class Vec {
 
     // Constructors
     Vec();
-    Vec(std::size_t size);
-    Vec(const std::initializer_list<T> l);
+    explicit Vec(std::size_t size);
+    explicit Vec(const std::initializer_list<T> l);
     Vec(const Vec& other);
     Vec(const Vec&& other) noexcept;
     ~Vec();
@@ -30,8 +30,8 @@ class Vec {
     // Operators
     Vec& operator=(const Vec& other);
     Vec& operator=(const Vec&& other) noexcept;
-    T operator[](std::size_t index) const;
-    T operator[](Iterator) const;
+    [[nodiscard]] T operator[](std::size_t index) const;
+    [[nodiscard]] T operator[](Iterator) const;
 
     // Modifier functions
     void push_back(const T data);
@@ -44,16 +44,16 @@ class Vec {
     void insert(std::size_t index, const T data);
 
     // Getters
-    std::size_t size() const;
-    std::size_t capacity() const;
+    [[nodiscard]] std::size_t size() const;
+    [[nodiscard]] std::size_t capacity() const;
 
     // Access functions
     const T* data() const noexcept;
     T* data() noexcept;
-    const T& front() const;
-    T& front();
-    const T& back() const;
-    T& back();
+    [[nodiscard]] const T& front() const;
+    [[nodiscard]] T& front();
+    [[nodiscard]] const T& back() const;
+    [[nodiscard]] T& back();
 
     // Iterator functions
     Iterator begin();
@@ -70,7 +70,7 @@ class Vec {
         pointer ptr;
 
        public:
-        Iterator(pointer target);
+        explicit Iterator(pointer target);
 
         reference operator*();
         pointer raw();
@@ -170,7 +170,7 @@ void Vec<T>::push_back(const T data) {
 
     T temp = data;
     arr[vecSize] = temp;
-    vecSize++;
+    ++vecSize;
 }
 
 template <typename T>
@@ -211,10 +211,6 @@ void Vec<T>::erase(std::size_t index) {
 
 template <typename T>
 void Vec<T>::resize(const std::size_t newSize) {
-    if (newSize < 0) {
-        throw std::length_error("Can not resize below zero.");
-    }
-
     if (newSize > vecSize) {
         // This seems like a really stupid solution
         arr = static_cast<T*>(std::realloc(arr, newSize));
@@ -229,7 +225,7 @@ void Vec<T>::reserve(const std::size_t newCap) {
         return;
     }
 
-    if (newCap <= 0) {
+    if (newCap == 0) {
         clear();
     }
 
