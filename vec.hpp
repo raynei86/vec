@@ -313,16 +313,12 @@ T Vec<T>::operator[](Iterator index) const {
 
 template <typename T>
 auto Vec<T>::begin() -> Iterator {
-    Iterator temp(&arr[0]);
-
-    return temp;
+    return Iterator(&arr[0]);
 }
 
 template <typename T>
 auto Vec<T>::end() -> Iterator {
-    Iterator temp(&arr[vecSize]);
-
-    return temp;
+    return Iterator(&arr[vecSize]);
 }
 
 template <typename T>
@@ -353,8 +349,7 @@ auto Vec<T>::Iterator::operator++(int) -> Iterator {
 
 template <typename T>
 auto Vec<T>::Iterator::operator+(const unsigned int moveLength) -> Iterator {
-    Iterator temp(ptr + moveLength);
-    return temp;
+    return Iterator(ptr + moveLength);
 }
 
 template <typename T>
@@ -372,8 +367,7 @@ auto Vec<T>::Iterator::operator--(int) -> Iterator {
 
 template <typename T>
 auto Vec<T>::Iterator::operator-(const unsigned int moveLength) -> Iterator {
-    Iterator temp(ptr - moveLength);
-    return temp;
+    return Iterator(ptr - moveLength);
 }
 
 template <typename T>
